@@ -47,24 +47,22 @@ JOIN stops AS stops_table1 ON route_table1.stop = stops_table1.id
 JOIN stops AS stops_table2 ON route_table2.stop = stops_table2.id
 WHERE stops_table1.name = 'Craiglockhart';
 
-/* https://stackoverflow.com/questions/24834948/self-join-tutorial-10-on-sqlzoo most voted solution */
-
 SELECT DISTINCT 1st.num AS first_bus, 1st.company AS first_company, 
                 stops.name AS transfer, 
                 2nd.num AS second_bus, 2nd.company AS second_company
 FROM (
     SELECT a.company, a.num, b.stop
-    -- first self-join
+
     FROM route a JOIN route b ON a.company = b.company AND a.num = b.num
     WHERE a.stop = (SELECT id FROM stops WHERE name = 'Craiglockhart')
 ) AS 1st
 JOIN (
     SELECT a.company, a.num, b.stop
-    -- second self-join
+
     FROM route a JOIN route b ON a.company = b.company AND a.num = b.num
     WHERE a.stop = (SELECT id FROM stops WHERE name = 'Lochend')
 ) AS 2nd
--- join the above two tables on their matching stops
+
 ON 1st.stop = 2nd.stop
 JOIN stops ON stops.id = 1st.stop
 ORDER BY first_bus, transfer, second_bus;
